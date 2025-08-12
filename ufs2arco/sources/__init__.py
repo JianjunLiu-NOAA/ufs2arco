@@ -7,6 +7,7 @@ from .aws_hrrr_archive import AWSHRRRArchive
 from .gcs_era5_1degree import GCSERA5OneDegree
 from .gcs_replay_atmosphere import GCSReplayAtmosphere
 from .gfs_archive import GFSArchive
+from .gdas_archive import GDASArchive
 
 
 # writing something general is actually more work than
@@ -17,4 +18,5 @@ _recognized = {
     "gcs_era5_1degree": "GCSERA5OneDegree",
     "gcs_replay_atmosphere": "GCSReplayAtmosphere",
     "gfs_archive": "GFSArchive",
+    "gdas_archive": "GDASArchive",
 }
