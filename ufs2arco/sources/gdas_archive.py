@@ -9,13 +9,30 @@ from ufs2arco.sources import Source, NOAAGribForecastData
 
 logger = logging.getLogger("ufs2arco")
 
-class GFSArchive(NOAAGribForecastData, Source):
+class GDASArchive(NOAAGribForecastData, Source):
     """
-    Access 0.25 or 1.0 degree archives of NOAA's Global Forecast System (GFS) via:
-        * if before 2021: UCAR Research Data Archive (RDA)
-            * https://rda.ucar.edu/datasets/d084001
-            * https://rda.ucar.edu/datasets/d084003
-        * after 2021: AWS at https://registry.opendata.aws/noaa-gfs-bdp-pds/
+    Access 0.25 or 1.0 degree archives of NOAA's Global Forecast System (GFS) via AWS:
+        * t0 > pd.Timestamp("2015-06-22T06"):
+                gdas1.t00z.pgrb2.0p25.f000...f003...f009
+                gdas1.t00z.pgrb2.1p00.f000...f003...f009
+            e.g.: s3://noaa-gfs-bdp-pds/gdas.20160101/00/gdas1.t00z.pgrb2.0p25.f000
+    
+        * t0 > pd.Timestamp("2016-05-11T06"):
+                gdas1.t00z.pgrb2.0p25.f000...f001...f009
+                gdas1.t00z.pgrb2.1p00.f000...f001...f009
+            e.g.: s3://noaa-gfs-bdp-pds/gdas.20160601/00/gdas1.t00z.pgrb2.0p25.f000
+            
+        * t0 > pd.Timestamp("2017-07-19T06"):
+                gdas.t00z.pgrb2.0p25.f000...f001...f009
+                gdas.t00z.pgrb2.1p00.f000...f001...f009
+            e.g.: s3://noaa-gfs-bdp-pds/gdas.20210101/00/gdas.t00z.pgrb2.0p25.f000
+            
+        * t0 > pd.Timestamp("2021-03-22T06")
+                gdas.t00z.pgrb2.0p25.f000...f001...f009
+                gdas.t00z.pgrb2.1p00.f000...f001...f009
+            e.g.: s3://noaa-gfs-bdp-pds/gdas.20220101/00/atmos/gdas.t00z.pgrb2.0p25.f000
+            
+        * AWS at https://registry.opendata.aws/noaa-gfs-bdp-pds/
     """
 
     sample_dims = ("t0", "fhr")
@@ -80,7 +97,6 @@ class GFSArchive(NOAAGribForecastData, Source):
             accum_hrs=accum_hrs,
         )
 
-
         # make sure the default variable set "just works"
         # by pulling out the variable names only available at forecast time
         if tuple(self.variables) == self.available_variables:
@@ -90,7 +106,7 @@ class GFSArchive(NOAAGribForecastData, Source):
                     varlist.append(key)
             self.variables = varlist
 
-        # for GFS, plenty of variables only exist in the forecast, not analysis grib files
+        # for GDAS, plenty of variables only exist in the forecast, not analysis grib files
         # make sure the user doesn't ask for these before we get started
         if any(self.fhr == 0):
             requested_vars_not_in_analysis = []
@@ -110,34 +126,29 @@ class GFSArchive(NOAAGribForecastData, Source):
         file_suffix: str,
     ) -> str:
         """
-        Build the file path to a GFS GRIB file on RDA or AWS.
+        Build the file path to a GDAS GRIB file on AWS.
 
         Args:
             t0 (pd.Timestamp): The initial condition timestamp.
             fhr (int): The forecast hour.
-            file_suffix (str): For GFS, either '' or 'b'.
+            file_suffix (str): For GDAS,''
 
         Returns:
             str: The constructed file path.
         """
         res = self.resolution
-        if t0 < pd.Timestamp("2021-01-01T00"):
-            if res=='0p25':
-                bucket = f"https://data.rda.ucar.edu/d084001" if file_suffix == "" else \
-                        f"https://data.rda.ucar.edu/d084003"
-                outer = f"{t0.year:04d}/{t0.year:04d}{t0.month:02d}{t0.day:02d}"
-                fname = f"gfs.{res}{file_suffix}.{t0.year:04d}{t0.month:02d}{t0.day:02d}{t0.hour:02d}.f{fhr:03d}.grib2"
-            else:
-                msg = f"{self.name}.__init__: Before {t0}: only 0.25 degree GFS data are available on UCAR Research Data Archive (RDA)."
-                raise Exception(msg)
+        bucket = "s3://noaa-gfs-bdp-pds"
+        outer = f"gdas.{t0.year:04d}{t0.month:02d}{t0.day:02d}/{t0.hour:02d}"
+        if t0 > pd.Timestamp("2016-05-11T06"):
+            fname = f"gdas1.t{t0.hour:02d}z.pgrb2.{res}.f{fhr:03d}"
+            if t0 > pd.Timestamp("2017-07-19T06"):
+                fname = f"gdas.t{t0.hour:02d}z.pgrb2.{res}.f{fhr:03d}"
+                if t0 > pd.Timestamp("2021-03-22T06"):
+                   fname = "atmos/" + fname
         else:
-            bucket = "s3://noaa-gfs-bdp-pds"
-            outer = f"gfs.{t0.year:04d}{t0.month:02d}{t0.day:02d}/{t0.hour:02d}"
-            fname = f"gfs.t{t0.hour:02d}z.pgrb2{file_suffix}.{res}.f{fhr:03d}"
-
-            if t0 > pd.Timestamp("2021-03-22T06"):
-                fname = "atmos/" + fname
-
+            msg = f"{self.name}.__init__: Data corresponding to the current date are not available on AWS."
+            raise Exception(msg)
+                
         fullpath = f"filecache::{bucket}/{outer}/{fname}"
         logger.debug(f"{self.name}._build_path: reading {fullpath}")
         return fullpath
