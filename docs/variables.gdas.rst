@@ -198,7 +198,7 @@
      - Total Cloud Cover
      - False
    * - ``hcc``
-     - Total Cloud Cover
+     - High Cloud Cover
      - False
    * - ``mcc``
      - Medium cloud cover
