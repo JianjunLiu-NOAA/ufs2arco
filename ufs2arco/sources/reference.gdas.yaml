@@ -602,7 +602,7 @@ hcc:
     stepType: instant
     typeOfLevel: highCloudLayer
   forecast_only: false
-  long_name: Total Cloud Cover
+  long_name: High Cloud Cover
 mcc:
   file_suffixes:
   - ''
