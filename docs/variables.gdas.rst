@@ -194,3 +194,27 @@
    * - ``wilt``
      - Wilting Point
      - False
+   * - ``tcc``
+     - Total Cloud Cover
+     - False
+   * - ``hcc``
+     - Total Cloud Cover
+     - False
+   * - ``mcc``
+     - Medium cloud cover
+     - False
+   * - ``lcc``
+     - Low cloud cover
+     - False
+   * - ``prate``
+     - Precipitation rate
+     - False
+   * - ``veg``
+     - Vegetation
+     - False
+   * - ``slt``
+     - Soil type
+     - False
+   * - ``sit``
+     - Sea ice temperature
+     - False
