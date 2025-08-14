@@ -11,7 +11,7 @@ logger = logging.getLogger("ufs2arco")
 
 class GFSArchive(NOAAGribForecastData, Source):
     """
-    Access 1/4 (1) degree archives of NOAA's Global Forecast System (GFS) via:
+    Access 0.25 or 1.0 degree archives of NOAA's Global Forecast System (GFS) via:
         * if before 2021: UCAR Research Data Archive (RDA)
             * https://rda.ucar.edu/datasets/d084001
             * https://rda.ucar.edu/datasets/d084003
@@ -58,7 +58,7 @@ class GFSArchive(NOAAGribForecastData, Source):
         Args:
             t0 (dict): Dictionary with start and end times for initial conditions, and e.g. "freq=6h". All options get passed to ``pandas.date_range``.
             fhr (dict): Dictionary with 'start', 'end', and 'step' forecast hours.
-            resolution (str): spatial resolution, 0p25:1/4-degree; 1p00: 1-degree
+            resolution (str): spatial resolution, 0p25: 0.25 degree; 1p00: 1.0 degree
             variables (list, tuple, optional): variables to grab
             levels (list, tuple, optional): vertical levels to grab
             use_nearest_levels (bool, optional): if True, all level selection with
@@ -128,7 +128,7 @@ class GFSArchive(NOAAGribForecastData, Source):
                 outer = f"{t0.year:04d}/{t0.year:04d}{t0.month:02d}{t0.day:02d}"
                 fname = f"gfs.{res}{file_suffix}.{t0.year:04d}{t0.month:02d}{t0.day:02d}{t0.hour:02d}.f{fhr:03d}.grib2"
             else:
-                msg = f"{self.name}.__init__: Before {t0}: only 1/4 degree GFS data are available on UCAR Research Data Archive (RDA)."
+                msg = f"{self.name}.__init__: Before {t0}: only 0.25 degree GFS data are available on UCAR Research Data Archive (RDA)."
                 raise Exception(msg)
         else:
             bucket = "s3://noaa-gfs-bdp-pds"
