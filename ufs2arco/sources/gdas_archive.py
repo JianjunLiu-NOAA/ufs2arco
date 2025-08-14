@@ -11,7 +11,7 @@ logger = logging.getLogger("ufs2arco")
 
 class GDASArchive(NOAAGribForecastData, Source):
     """
-    Access 1/4 (1) degree archives of NOAA's Global Forecast System (GFS) via AWS:
+    Access 0.25 or 1.0 degree archives of NOAA's Global Forecast System (GFS) via AWS:
         * t0 > pd.Timestamp("2015-06-22T06"):
                 gdas1.t00z.pgrb2.0p25.f000...f003...f009
                 gdas1.t00z.pgrb2.1p00.f000...f003...f009
@@ -75,7 +75,7 @@ class GDASArchive(NOAAGribForecastData, Source):
         Args:
             t0 (dict): Dictionary with start and end times for initial conditions, and e.g. "freq=6h". All options get passed to ``pandas.date_range``.
             fhr (dict): Dictionary with 'start', 'end', and 'step' forecast hours.
-            resolution (str): spatial resolution, 0p25:1/4-degree; 1p00: 1-degree
+            resolution (str): spatial resolution, 0p25: 0.25 degree; 1p00: 1.0 degree
             variables (list, tuple, optional): variables to grab
             levels (list, tuple, optional): vertical levels to grab
             use_nearest_levels (bool, optional): if True, all level selection with
