@@ -11,7 +11,7 @@ logger = logging.getLogger("ufs2arco")
 
 class GDASArchive(NOAAGribForecastData, Source):
     """
-    Access 1/4 degree archives of NOAA's Global Forecast System (GFS) via AWS:
+    Access 1/4 (1) degree archives of NOAA's Global Forecast System (GFS) via AWS:
         * t0 > pd.Timestamp("2015-06-22T06"):
                 gdas1.t00z.pgrb2.0p25.f000...f003...f009
                 gdas1.t00z.pgrb2.1p00.f000...f003...f009
@@ -64,6 +64,7 @@ class GDASArchive(NOAAGribForecastData, Source):
         self,
         t0: dict,
         fhr: dict,
+        resolution: str,
         variables: Optional[list | tuple] = None,
         levels: Optional[list | tuple] = None,
         use_nearest_levels: Optional[bool] = False,
@@ -74,6 +75,7 @@ class GDASArchive(NOAAGribForecastData, Source):
         Args:
             t0 (dict): Dictionary with start and end times for initial conditions, and e.g. "freq=6h". All options get passed to ``pandas.date_range``.
             fhr (dict): Dictionary with 'start', 'end', and 'step' forecast hours.
+            resolution (str): spatial resolution, 0p25:1/4-degree; 1p00: 1-degree
             variables (list, tuple, optional): variables to grab
             levels (list, tuple, optional): vertical levels to grab
             use_nearest_levels (bool, optional): if True, all level selection with
@@ -86,6 +88,7 @@ class GDASArchive(NOAAGribForecastData, Source):
         """
         self.t0 = pd.date_range(**t0)
         self.fhr = np.arange(fhr["start"], fhr["end"] + 1, fhr["step"])
+        self.resolution = resolution
         super().__init__(
             variables=variables,
             levels=levels,
@@ -133,12 +136,13 @@ class GDASArchive(NOAAGribForecastData, Source):
         Returns:
             str: The constructed file path.
         """
+        res = self.resolution
         bucket = "s3://noaa-gfs-bdp-pds"
         outer = f"gdas.{t0.year:04d}{t0.month:02d}{t0.day:02d}/{t0.hour:02d}"
         if t0 > pd.Timestamp("2016-05-11T06"):
-            fname = f"gdas1.t{t0.hour:02d}z.pgrb2.0p25.f{fhr:03d}"
+            fname = f"gdas1.t{t0.hour:02d}z.pgrb2.{res}.f{fhr:03d}"
             if t0 > pd.Timestamp("2017-07-19T06"):
-                fname = f"gdas.t{t0.hour:02d}z.pgrb2.0p25.f{fhr:03d}"
+                fname = f"gdas.t{t0.hour:02d}z.pgrb2.{res}.f{fhr:03d}"
                 if t0 > pd.Timestamp("2021-03-22T06"):
                    fname = "atmos/" + fname
         else:

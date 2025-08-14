@@ -11,7 +11,7 @@ logger = logging.getLogger("ufs2arco")
 
 class GFSArchive(NOAAGribForecastData, Source):
     """
-    Access 1/4 degree archives of NOAA's Global Forecast System (GFS) via:
+    Access 1/4 (1) degree archives of NOAA's Global Forecast System (GFS) via:
         * if before 2021: UCAR Research Data Archive (RDA)
             * https://rda.ucar.edu/datasets/d084001
             * https://rda.ucar.edu/datasets/d084003
@@ -47,6 +47,7 @@ class GFSArchive(NOAAGribForecastData, Source):
         self,
         t0: dict,
         fhr: dict,
+        resolution: str,
         variables: Optional[list | tuple] = None,
         levels: Optional[list | tuple] = None,
         use_nearest_levels: Optional[bool] = False,
@@ -57,6 +58,7 @@ class GFSArchive(NOAAGribForecastData, Source):
         Args:
             t0 (dict): Dictionary with start and end times for initial conditions, and e.g. "freq=6h". All options get passed to ``pandas.date_range``.
             fhr (dict): Dictionary with 'start', 'end', and 'step' forecast hours.
+            resolution (str): spatial resolution, 0p25:1/4-degree; 1p00: 1-degree
             variables (list, tuple, optional): variables to grab
             levels (list, tuple, optional): vertical levels to grab
             use_nearest_levels (bool, optional): if True, all level selection with
@@ -69,6 +71,7 @@ class GFSArchive(NOAAGribForecastData, Source):
         """
         self.t0 = pd.date_range(**t0)
         self.fhr = np.arange(fhr["start"], fhr["end"] + 1, fhr["step"])
+        self.resolution = resolution
         super().__init__(
             variables=variables,
             levels=levels,
@@ -117,18 +120,20 @@ class GFSArchive(NOAAGribForecastData, Source):
         Returns:
             str: The constructed file path.
         """
+        res = self.resolution
         if t0 < pd.Timestamp("2021-01-01T00"):
-
-            bucket = f"https://data.rda.ucar.edu/d084001" if file_suffix == "" else \
-                    f"https://data.rda.ucar.edu/d084003"
-            outer = f"{t0.year:04d}/{t0.year:04d}{t0.month:02d}{t0.day:02d}"
-            fname = f"gfs.0p25{file_suffix}.{t0.year:04d}{t0.month:02d}{t0.day:02d}{t0.hour:02d}.f{fhr:03d}.grib2"
-
-
+            if res=='0p25':
+                bucket = f"https://data.rda.ucar.edu/d084001" if file_suffix == "" else \
+                        f"https://data.rda.ucar.edu/d084003"
+                outer = f"{t0.year:04d}/{t0.year:04d}{t0.month:02d}{t0.day:02d}"
+                fname = f"gfs.{res}{file_suffix}.{t0.year:04d}{t0.month:02d}{t0.day:02d}{t0.hour:02d}.f{fhr:03d}.grib2"
+            else:
+                msg = f"{self.name}.__init__: Before {t0}: only 1/4 degree GFS data are available on UCAR Research Data Archive (RDA)."
+                raise Exception(msg)
         else:
             bucket = "s3://noaa-gfs-bdp-pds"
             outer = f"gfs.{t0.year:04d}{t0.month:02d}{t0.day:02d}/{t0.hour:02d}"
-            fname = f"gfs.t{t0.hour:02d}z.pgrb2{file_suffix}.0p25.f{fhr:03d}"
+            fname = f"gfs.t{t0.hour:02d}z.pgrb2{file_suffix}.{res}.f{fhr:03d}"
 
             if t0 > pd.Timestamp("2021-03-22T06"):
                 fname = "atmos/" + fname
