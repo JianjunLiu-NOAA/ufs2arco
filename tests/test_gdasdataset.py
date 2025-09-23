@@ -10,8 +10,9 @@ from ufs2arco.sources import GDASArchive
 def gdas_dataset():
     t0 = {"start": "2025-01-01T00", "end": "2025-01-01T18", "freq": "6h"}
     fhr = {"start": 0, "end": 6, "step": 6}
+    resolution: 1p00
     chunks = {"t0": 1, "fhr": 1,  "latitude": -1, "longitude": -1}
-    return GDASArchive(t0, fhr, variables=["t", "t2m", "lsm"], levels=[100, 500, 1000])
+    return GDASArchive(t0, fhr, resolution, variables=["t", "t2m", "lsm"], levels=[100, 500, 1000])
 
 def test_init(gdas_dataset):
     assert len(gdas_dataset.t0) == 4
