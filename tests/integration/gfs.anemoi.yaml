@@ -30,7 +30,7 @@ source:
     start: 2015-08-02T00
     end: 2015-08-03T18
     freq: 12h
-
+  resolution: 0p25
   fhr:
     start: 0
     end: 0
