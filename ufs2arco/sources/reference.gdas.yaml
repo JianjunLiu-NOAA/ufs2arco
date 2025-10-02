@@ -657,7 +657,23 @@ sit:
     typeOfLevel: surface
   forecast_only: false
   long_name: Sea ice temperature
-
-
-
-
+msl:
+  file_suffixes:
+  - ''
+  filter_by_keys:
+    paramId: 260074
+    stepType: instant
+    typeOfLevel: meanSea
+  forecast_only: false
+  long_name: Pressure reduced to MSL
+  original_name: prmsl
+# stl1:
+  # file_suffixes:  
+  # - ''
+  # filter_by_keys:
+    # level: 0.0 - 0.1
+    # paramId: 228139
+    # typeOfLevel: depthBelowLandLayer
+  # forecast_only: false
+  # long_name: Soil temperature
+  # original_name: st    
