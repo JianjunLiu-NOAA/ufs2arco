@@ -151,7 +151,7 @@ class SerialTopology:
     def _init_log(self, log_dir, level=logging.INFO):
         self.log_dir = "./" if log_dir is None else log_dir
         if not os.path.isdir(self.log_dir):
-            os.makedirs(self.log_dir)
+            os.makedirs(self.log_dir,exist_ok=True)
         self.logfile = f"{self.log_dir}/log.serial.out"
 
         logger.setLevel(level=level)

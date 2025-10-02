@@ -22,7 +22,7 @@ def main():
 
     with open(args.yaml_file, "r") as f:
         config = yaml.safe_load(f)
-
+    
     if "multisource" in config.keys():
         MultiDriver(args.yaml_file).run(overwrite=args.overwrite)
     else:

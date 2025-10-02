@@ -30,7 +30,13 @@ source:
     start: 2015-08-02T00
     end: 2015-08-03T18
     freq: 12h
+<<<<<<< HEAD
   resolution: 0p25
+=======
+  
+  resolution: 0p25    
+
+>>>>>>> 07d2431 (fix bug for processing gefs)
   fhr:
     start: 0
     end: 0
