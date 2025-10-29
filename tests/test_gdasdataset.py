@@ -13,7 +13,7 @@ def gdas_dataset():
     resolution= '1p00'
     chunks = {"t0": 1, "fhr": 1,  "latitude": -1, "longitude": -1}
     return GDASArchive(t0, fhr, resolution, variables=["t", "t2m", "prmsl"], levels=[100, 500, 1000])
-
+  
 def test_init(gdas_dataset):
     assert len(gdas_dataset.t0) == 4
     assert np.array_equal(gdas_dataset.fhr, np.array([0, 6]))
