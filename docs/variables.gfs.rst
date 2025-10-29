@@ -200,3 +200,6 @@
    * - ``wilt``
      - Wilting Point
      - False
+   * - ``prmsl``
+     - Pressure reduced to MSL
+     - False

@@ -657,7 +657,7 @@ sit:
     typeOfLevel: surface
   forecast_only: false
   long_name: Sea ice temperature
-msl:
+prmsl:
   file_suffixes:
   - ''
   filter_by_keys:
@@ -666,7 +666,7 @@ msl:
     typeOfLevel: meanSea
   forecast_only: false
   long_name: Pressure reduced to MSL
-  original_name: prmsl
+
 # stl1:
   # file_suffixes:  
   # - ''

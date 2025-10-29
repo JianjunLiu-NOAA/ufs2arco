@@ -218,3 +218,6 @@
    * - ``sit``
      - Sea ice temperature
      - False
+   * - ``prmsl``
+     - Pressure reduced to MSL
+     - False

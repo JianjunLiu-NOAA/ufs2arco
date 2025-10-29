@@ -611,3 +611,13 @@ wilt:
     typeOfLevel: surface
   forecast_only: false
   long_name: Wilting Point
+prmsl: 
+  file_suffixes:
+  - ''
+  filter_by_keys:
+    paramId: 260074
+    stepType: instant
+    typeOfLevel: meanSea
+  forecast_only: false
+  long_name: Pressure reduced to MSL
+

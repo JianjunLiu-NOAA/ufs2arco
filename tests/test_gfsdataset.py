@@ -12,7 +12,7 @@ def gfs_dataset():
     fhr = {"start": 0, "end": 6, "step": 6}
     resolution = '0p25'
     chunks = {"t0": 1, "fhr": 1,  "latitude": -1, "longitude": -1}
-    return GFSArchive(t0, fhr, resolution, variables=["t", "t2m", "lsm"], levels=[100, 500, 1000])
+    return GFSArchive(t0, fhr, resolution, variables=["t", "t2m", "prmsl"], levels=[100, 500, 1000])
 
 def test_init(gfs_dataset):
     assert len(gfs_dataset.t0) == 4
