@@ -157,7 +157,7 @@ v100:
     typeOfLevel: heightAboveGround
   forecast_only: false
   long_name: 100 metre V wind component
-msl:
+prmsl:
   file_suffixes:
   - a
   filter_by_keys:
@@ -166,7 +166,6 @@ msl:
     typeOfLevel: meanSea
   forecast_only: false
   long_name: Pressure reduced to MSL
-  original_name: prmsl
 pwat:
   file_suffixes:
   - a

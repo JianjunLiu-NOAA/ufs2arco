@@ -40,7 +40,7 @@
      - 100 metre U wind component
    * - ``v100``
      - 100 metre V wind component
-   * - ``msl``
+   * - ``prmsl``
      - Pressure reduced to MSL
    * - ``pwat``
      - Precipitable water
